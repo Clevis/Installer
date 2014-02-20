@@ -50,6 +50,21 @@ module.exports = function(grunt) {
 
 					return '';
 				}
+			},
+
+			// Correct write permissons
+			setPermissions: {
+				cmd: function() {
+					var files = {
+						// filename: octal number
+						'temp': 0777,
+						'log': 0777
+					};
+					for(file in files){
+						fs.chmodSync(file, files[file]);
+					}
+					return '';
+				}
 			}
 
 		}
@@ -62,6 +77,6 @@ module.exports = function(grunt) {
 
 	// Register tasks
 	grunt.registerTask('default', ['']);
-	grunt.registerTask('install', 'Project semi-automatic installation', ['prompt:install', 'exec:createDB', 'exec:createConfig']);
+	grunt.registerTask('install', 'Project semi-automatic installation', ['prompt:install', 'exec:createDB', 'exec:createConfig', 'exec:setPermissions']);
 
 };
