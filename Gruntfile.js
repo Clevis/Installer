@@ -11,7 +11,8 @@ module.exports = function(grunt) {
 			install: {
 				options: {
 					questions: [
-						{ config: 'dbHost', type: 'input', message: 'DB host', default: '127.0.0.1' },
+						{ config: 'dbHost', type: 'input', message: 'DB host',
+							default: fs.existsSync('/etc/init.d/virtualbox-guest-utils') ? '10.0.2.2' : '127.0.0.1' },
 						{ config: 'dbUser', type: 'input', message: 'DB username', default: 'root' },
 						{ config: 'dbPass', type: 'password', message: 'DB password', default: '' },
 						{ config: 'dbName', type: 'input', message: 'DB database', default: /\w*$/.exec(__dirname) }
