@@ -9,4 +9,4 @@ Semi-automatic script to install fresh cloned Nette project.
 
 ## Node.js way
 
-`npm install`
+`npm install` (or `npm --registry http://registry.npmjs.eu/ install` in case of NPM downtime)
