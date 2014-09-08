@@ -30,7 +30,7 @@ class Installer
 		$this->createDatabase();
 		$this->createConfig();
 		$this->setPermissions();
-		echo "Please run migrations and 'composer update --dev --prefer-dist' if you're starting a new project.";
+		$this->warning("Please run migrations and 'composer update --dev --prefer-dist' if you're starting a new project.");
 	}
 
 	/**
@@ -46,7 +46,13 @@ class Installer
 		);
 		foreach ($values as $field => $default)
 		{
-			$input = readline('Enter database ' . $field . ' [' . $default . ']: ');
+			if (!extension_loaded('readline')) {
+				echo 'Enter database ' . $field . ' [' . $default . ']: ';
+				$input = stream_get_line(STDIN, 1024, PHP_EOL);
+			} else {
+				$input = readline('Enter database ' . $field . ' [' . $default . ']: ');
+			}
+
 			if ($input === '')
 			{
 				$this->config['db'][$field] = $default;
@@ -74,6 +80,8 @@ class Installer
 		{
 			$this->error('Error creating database: ' . mysqli_error($connection));
 		}
+
+		$this->success('Database created ...');
 	}
 
 	/**
@@ -85,6 +93,8 @@ class Installer
 		{
 			chmod(__DIR__ . '/' . $folder, $permissions);
 		}
+
+		$this->success('Permissions changed ...');
 	}
 
 	/**
@@ -109,7 +119,10 @@ class Installer
 			}
 		}
 
-		file_put_contents($configFilename, $lines);
+		if (file_put_contents($configFilename, $lines))
+		{
+			$this->success('Local config file created ...');
+		}
 	}
 
 	/**
@@ -128,8 +141,28 @@ class Installer
 	 */
 	private function error($string)
 	{
-		echo $string . "\n";
+		echo "\033[0;31m" . $string . "\033[0m\n";
 		exit(1);
+	}
+
+	/**
+	 *
+	 * Prints success message.
+	 * @param  string
+	 */
+	private function success($string)
+	{
+		echo "\033[0;32m" . $string . "\033[0m\n";
+	}
+
+	/**
+	 *
+	 * Prints warning message.
+	 * @param  string
+	 */
+	private function warning($string)
+	{
+		echo "\033[0;36m" . $string . "\033[0m\n";
 	}
 
 }
